@@ -10,18 +10,22 @@ interface ContactFormProps {
 
 function ContactForm({ onSubmit, editingContact, onUpdate, onCancelEdit }: ContactFormProps) {
   const [name, setName] = useState('')
+  const [surname, setSurname] = useState('')
+  const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!name.trim() || !phone.trim()) {
+    if (!name.trim() || !surname.trim() || !email.trim() || !phone.trim()) {
       alert('Por favor complete todos los campos')
       return
     }
 
-    onSubmit({ name: name.trim(), phone: phone.trim() })
+    onSubmit({ name: name.trim(), surname: surname.trim(), email: email.trim(), phone: phone.trim() })
     setName('')
+    setSurname('')
+    setEmail('')
     setPhone('')
   }
 
@@ -37,7 +41,26 @@ function ContactForm({ onSubmit, editingContact, onUpdate, onCancelEdit }: Conta
           placeholder="Ingrese el nombre"
         />
       </div>
-      
+      <div className="form-group">
+        <label htmlFor="surname">Apellido:</label>
+        <input
+          type="text"
+          id="surname"
+          value={surname}
+          onChange={(e) => setSurname(e.target.value)}
+          placeholder="Ingrese el apellido"
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Ingrese el email"
+        />
+      </div>
       <div className="form-group">
         <label htmlFor="phone">Teléfono:</label>
         <input
@@ -48,7 +71,6 @@ function ContactForm({ onSubmit, editingContact, onUpdate, onCancelEdit }: Conta
           placeholder="Ingrese el teléfono"
         />
       </div>
-      
       <div className="form-actions">
         <button type="submit">
           Agregar
