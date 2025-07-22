@@ -24,11 +24,12 @@ function App() {
   }
 
   const handleEditContact = (contact: Contact) => {
-    console.log('Editar contacto:', contact)
+    setEditingContact(contact)
   }
 
   const handleUpdateContact = (updatedContact: Contact) => {
-    console.log('Actualizar contacto:', updatedContact)
+    setContacts(contacts.map(contact => contact.id === updatedContact.id ? updatedContact : contact))
+    setEditingContact(null)
   }
 
   const filteredContacts = contacts.filter(contact => {
@@ -50,7 +51,7 @@ function App() {
       
       <main className="app-main">
         <section className="form-section">
-          <h2>Agregar Contacto</h2>
+          <h2>{editingContact ? 'Editar Contacto' : 'Agregar Contacto'}</h2>
           <ContactForm 
             onSubmit={handleAddContact}
             editingContact={editingContact}

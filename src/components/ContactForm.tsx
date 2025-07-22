@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Contact } from '../types/Contact.tsx'
 
 interface ContactFormProps {
@@ -14,6 +14,20 @@ function ContactForm({ onSubmit, editingContact, onUpdate, onCancelEdit }: Conta
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
 
+  useEffect(() => {
+    if (editingContact) {
+      setName(editingContact.name)
+      setSurname(editingContact.surname)
+      setEmail(editingContact.email)
+      setPhone(editingContact.phone)
+    } else {
+      setName('')
+      setSurname('')
+      setEmail('')
+      setPhone('')
+    }
+  }, [editingContact])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -22,11 +36,17 @@ function ContactForm({ onSubmit, editingContact, onUpdate, onCancelEdit }: Conta
       return
     }
 
-    onSubmit({ name: name.trim(), surname: surname.trim(), email: email.trim(), phone: phone.trim() })
-    setName('')
-    setSurname('')
-    setEmail('')
-    setPhone('')
+    if (editingContact) {
+      onUpdate({
+        id: editingContact.id,
+        name: name.trim(),
+        surname: surname.trim(),
+        email: email.trim(),
+        phone: phone.trim()
+      })
+    } else {
+      onSubmit({ name: name.trim(), surname: surname.trim(), email: email.trim(), phone: phone.trim() })
+    }
   }
 
   return (
@@ -73,7 +93,7 @@ function ContactForm({ onSubmit, editingContact, onUpdate, onCancelEdit }: Conta
       </div>
       <div className="form-actions">
         <button type="submit">
-          Agregar
+          {editingContact ? 'Guardar Cambios' : 'Agregar'}
         </button>
         {editingContact && (
           <button type="button" onClick={onCancelEdit}>
