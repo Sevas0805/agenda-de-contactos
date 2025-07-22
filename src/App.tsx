@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Contact } from './types/Contact.tsx'
 import ContactForm from './components/ContactForm'
 import ContactList from './components/ContactList'
@@ -10,8 +10,26 @@ function App() {
   const [contacts, setContacts] = useState<Contact[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [editingContact, setEditingContact] = useState<Contact | null>(null)
+  const [error, setError] = useState('')
+  const errorTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showError = (msg: string) => {
+    setError(msg);
+    if (errorTimeout.current) clearTimeout(errorTimeout.current);
+    errorTimeout.current = setTimeout(() => setError(''), 3000);
+  };
 
   const handleAddContact = (contact: Omit<Contact, 'id'>) => {
+    const exists = contacts.some(c =>
+      c.name.trim().toLowerCase() === contact.name.trim().toLowerCase() &&
+      c.surname.trim().toLowerCase() === contact.surname.trim().toLowerCase() &&
+      c.email.trim().toLowerCase() === contact.email.trim().toLowerCase() &&
+      c.phone.trim() === contact.phone.trim()
+    );
+    if (exists) {
+      showError('Este contacto ya existe en la lista.');
+      return;
+    }
     const newContact: Contact = {
       ...contact,
       id: Date.now().toString()
@@ -58,6 +76,7 @@ function App() {
             onUpdate={handleUpdateContact}
             onCancelEdit={() => setEditingContact(null)}
           />
+          {error && <div className="error-toast">{error}</div>}
         </section>
 
         <section className="contacts-section">
